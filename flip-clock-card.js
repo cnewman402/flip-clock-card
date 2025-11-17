@@ -31,9 +31,7 @@ class FlipClockCard extends HTMLElement {
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
     
-    const showSeconds = this.config.show_seconds !== false;
     const use24Hour = this.config.use_24_hour !== false;
     
     let displayHours = hours;
@@ -49,11 +47,6 @@ class FlipClockCard extends HTMLElement {
     this.updateDigit('hour2', displayHours[1]);
     this.updateDigit('min1', minutes[0]);
     this.updateDigit('min2', minutes[1]);
-    
-    if (showSeconds) {
-      this.updateDigit('sec1', seconds[0]);
-      this.updateDigit('sec2', seconds[1]);
-    }
     
     if (ampm && this.shadowRoot.querySelector('.ampm')) {
       this.shadowRoot.querySelector('.ampm').textContent = ampm;
@@ -72,7 +65,6 @@ class FlipClockCard extends HTMLElement {
   }
 
   render() {
-    const showSeconds = this.config.show_seconds !== false;
     const use24Hour = this.config.use_24_hour !== false;
     
     this.shadowRoot.innerHTML = `
@@ -165,13 +157,6 @@ class FlipClockCard extends HTMLElement {
             <div class="digit" id="min1">0</div>
             <div class="digit" id="min2">0</div>
           </div>
-          ${showSeconds ? `
-            <span class="separator">:</span>
-            <div class="digit-group">
-              <div class="digit" id="sec1">0</div>
-              <div class="digit" id="sec2">0</div>
-            </div>
-          ` : ''}
           ${!use24Hour ? '<span class="ampm">AM</span>' : ''}
         </div>
       </ha-card>
@@ -188,7 +173,6 @@ class FlipClockCard extends HTMLElement {
 
   static getStubConfig() {
     return {
-      show_seconds: true,
       use_24_hour: true
     };
   }
@@ -215,15 +199,6 @@ class FlipClockCardEditor extends HTMLElement {
     
     this.innerHTML = `
       <div style="padding: 20px;">
-        <ha-formfield label="Show Seconds">
-          <ha-switch
-            .checked=${this._config.show_seconds !== false}
-            @change=${(e) => {
-              this._config = { ...this._config, show_seconds: e.target.checked };
-              this.configChanged(this._config);
-            }}
-          ></ha-switch>
-        </ha-formfield>
         <ha-formfield label="Use 24-Hour Format">
           <ha-switch
             .checked=${this._config.use_24_hour !== false}
